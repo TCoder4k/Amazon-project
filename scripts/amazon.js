@@ -1,4 +1,15 @@
+import { cart, addToCart } from "../data/cart.js";
+import { products } from "../data/products.js";
 let productsHtml = "";
+
+function updateCartQuantity() {
+  let cartQuantity = 0;
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity;
+  });
+
+  document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+}
 products.forEach((product) => {
   productsHtml += `
      <div class="product-container">
@@ -40,7 +51,7 @@ products.forEach((product) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-add-to-cart-${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -54,39 +65,31 @@ products.forEach((product) => {
 document.querySelector(".js-products-grid").innerHTML = productsHtml;
 
 document.querySelectorAll(".js-add-to-card").forEach((button) => {
+  let timeoutId = null;
+
   button.addEventListener("click", () => {
-    let matchingItem;
+    const { productId } = button.dataset;
+    const quantitySelector = document.querySelector(
+      `.js-quantity-selector-${productId}`,
+    ).value;
+    const quantity = Number(quantitySelector);
+    const addedMessage = document.querySelector(`.js-add-to-cart-${productId}`);
 
-    const productId = button.dataset.productId;
-     
-    const quantitySelector =document.querySelector(`.js-quantity-selector-${productId}`).value;
-    
-    const valueSelector = Number(quantitySelector)
+    addToCart(productId, quantity);
+    updateCartQuantity();
+    function showAddMessage() {
+      if (timeoutId) clearTimeout(timeoutId);
+      addedMessage.classList.add("change-opacity");
 
-    cart.forEach((item) => {
-      if (productId === item.productId) {
-        matchingItem = item;
-      }
-    });
-    if (matchingItem) {
-      matchingItem.quantity += valueSelector;
-    } else {
-      cart.push({
-        productId: productId,
-        quantity: valueSelector,
-      });
+      timeoutId = setTimeout(() => {
+        addedMessage.classList.remove("change-opacity");
+        timeoutId = null;
+      }, 2000);
     }
+    showAddMessage();
 
-   
-    let cartQuantity = 0;
-    cart.forEach((item)=>{
-        cartQuantity += item.quantity;
-    })
-
-    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity
-    
+    console.log(addedMessage);
     console.log(quantitySelector);
-    console.log(cartQuantity);
     console.log(cart);
   });
 });
