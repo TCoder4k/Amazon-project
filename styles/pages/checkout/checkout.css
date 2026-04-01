@@ -150,7 +150,9 @@
   margin-left: 0px;
   cursor: pointer;
 }
-
+.quantity-input {
+  width: 30px;
+}
 .delivery-option-date {
   color: rgb(0, 118, 0);
   font-weight: 500;
