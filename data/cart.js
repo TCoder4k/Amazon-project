@@ -10,7 +10,18 @@ if(!cart){
     quantity: 2
   }];
 }
-
+export function updateQuantity(productId, newQuantity){
+  let matchingItem;
+  cart.forEach((cartItem)=>{
+    if(cartItem.productId === productId){
+      matchingItem = cartItem;
+    }
+  })
+  if(matchingItem){
+    matchingItem.quantity = newQuantity;
+    saveToStorage();
+  }
+}
  export function calculateCartQuantity() {
   let cartQuantity = 0;
   cart.forEach((cartItem) => {
